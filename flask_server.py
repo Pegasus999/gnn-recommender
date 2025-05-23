@@ -2,8 +2,7 @@
 """
 Flask API Server for GNN Recommender System
 
-This Flask server provides a REST API endpoint for getting API recommendations
-using the same parameters as the CLI interface.
+This Flask server provides a REST API endpoint for getting API recommendations.
 
 Endpoints:
     POST /recommend - Get API recommendations
@@ -116,7 +115,7 @@ def health_check():
 @app.route('/valid-tags', methods=['GET'])
 def get_valid_tags():
     """
-    Get the list of valid tags extracted from the dataset
+    Endpoint that returns the list of valid tags extracted from the dataset
     
     Returns:
     {
@@ -164,7 +163,7 @@ def get_valid_tags():
 @app.route('/recommend', methods=['POST'])
 def get_recommendations():
     """
-    Get API recommendations based on tags and description
+    Endpoint that returns API recommendations based on input tags and description
     
     Request body:
     {

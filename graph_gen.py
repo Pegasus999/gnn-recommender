@@ -1,4 +1,4 @@
-# graph.py with tag handling and data balancing
+# Graph generation module for creating the heterogeneous graph
 import pandas as pd
 import torch
 from torch_geometric.data import HeteroData
@@ -65,8 +65,8 @@ def analyze_tag_distribution():
 
 tag_analysis = analyze_tag_distribution()
 
-# ===  edge filtering with category balancing ===
-print("\n⚖️  Applying  edge filtering...")
+# === Edge filtering with category balancing ===
+print("\n⚖️  Applying edge filtering...")
 
 # Group edges by API and analyze their tag distribution
 api_edge_dict = defaultdict(list)
@@ -117,7 +117,7 @@ edge_index = torch.tensor([
 
 # ===  TF-IDF Features with richer text processing ===
 def process_tags_(series, include_descriptions=False):
-    """ tag processing with optional description inclusion"""
+    """Processes and normalizes tag information from a pandas Series"""
     processed = []
     for text in series.fillna(""):
         if text:

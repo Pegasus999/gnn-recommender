@@ -32,14 +32,14 @@ def set_seed(seed=42):
 
 
 class DataBalancer:
-    """Data balancing for API edge distribution"""
+    """Handles data balancing for API edge distribution"""
     
     def __init__(self, data_path: str = "dataset.pt"):
         self.data = torch.load(data_path, weights_only=False)
         self.analyze_current_balance()
     
     def analyze_current_balance(self):
-        """Analyze current edge distribution balance"""
+        """Analyzes current edge distribution balance"""
         print("\n📊 Analyzing current data balance...")
         
         edge_index = self.data['mashup', 'uses', 'api'].edge_index
@@ -81,7 +81,7 @@ class DataBalancer:
     
     def create_balanced_splits(self, val_ratio: float = 0.1, test_ratio: float = 0.1, 
                               max_edges_per_api: int = 20, min_edges_per_api: int = 2):
-        """Create balanced train/val/test splits"""
+        """Creates balanced train/validation/test splits with controlled API edge distribution"""
         print(f"\n⚖️ Creating balanced splits (max {max_edges_per_api} edges per API)...")
         
         edge_index = self.data['mashup', 'uses', 'api'].edge_index
@@ -204,7 +204,7 @@ def prepare_data_splits_balanced(data, device='cpu', max_edges_per_api=20):
 
 
 def train_epoch(model, data, train_edges, optimizer, device):
-    """Training epoch with balanced negative sampling"""
+    """Performs a single training epoch including forward pass, loss computation and optimization"""
     model.train()
     optimizer.zero_grad()
     
@@ -430,7 +430,7 @@ def plot_training_curves(train_losses, val_aucs, val_aps, pred_stats=None, confi
 
 
 def save_embeddings(model, data, device, save_path='node_embeddings.pt'):
-    """Save learned node embeddings"""
+    """Saves learned node embeddings to a file"""
     try:
         model.eval()
         with torch.no_grad():

@@ -6,7 +6,7 @@ from typing import Dict, Tuple
 
 
 class HeteroGNN(nn.Module):
-    """ Heterogeneous GNN for Mashup-API Recommendation"""
+    """Heterogeneous Graph Neural Network for Mashup-API Recommendation"""
     
     def __init__(self, in_channels: int, hidden_channels: int, out_channels: int, 
                  num_layers: int = 3, dropout: float = 0.2, num_heads: int = 4):

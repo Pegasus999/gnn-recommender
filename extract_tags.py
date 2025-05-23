@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 Extract unique tags from API and Mashup CSV files.
-This script will create a comprehensive list of all valid tags that can be used 
-in the web interface for tag validation.
+
+This script creates a comprehensive list of all valid tags for tag validation.
 """
 
 import pandas as pd

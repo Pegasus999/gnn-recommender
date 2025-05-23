@@ -19,7 +19,7 @@ from utils import (
 set_seed()
 
 def run_experiment(config, data, device):
-    """Runs a single experiment with a given configuration"""
+    """Runs a single experiment with the specified configuration"""
     try:
         print(f"\n--- Running Experiment with Config ID: {config['id']} ---")
         set_seed(42)

@@ -1,4 +1,4 @@
-# trainer with data balancing and training procedures
+# Training module for GNN model
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -19,7 +19,7 @@ from utils import (
 
 
 class MashupAPITrainer:
-    """ training pipeline with data balancing"""
+    """Training pipeline for Mashup-API recommendation model"""
     
     def __init__(self, data_path: str = "dataset.pt", device: str = None):
         self.device = device or ('cuda' if torch.cuda.is_available() else 'cpu')

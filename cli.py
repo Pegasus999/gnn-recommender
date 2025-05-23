@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-Explainability CLI for API Recommendation System
+CLI for API Recommendation System
 
-This script provides a command-line interface to test the  explainability features.
+This script provides a command-line interface for the API recommendation system.
 
 Usage:
-    python explainability_cli.py                    # Interactive mode
-    python explainability_cli.py --tags "web,api"  # Direct recommendation
-    python explainability_cli.py --demo             # Run demo
-    python explainability_cli.py --validate "invalid,tags"  # Test validation
+    python cli.py                    # Interactive mode
+    python cli.py --tags "web,api"   # Direct recommendation
+    python cli.py --demo             # Run demo
+    python cli.py --validate "invalid,tags"  # Test validation
 """
 
 import argparse

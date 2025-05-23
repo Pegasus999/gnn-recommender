@@ -1,26 +1,24 @@
 #!/usr/bin/env python3
 """
-Complete Explainability Features Demonstration
+API Recommendation System Demonstration
 
-This script showcases all the explainability features implemented in the
-API recommendation system.
+This script showcases the features of the API recommendation system.
 """
 
 from input import RecommendationSystem
 import time
 
 def demo_feature_showcase():
-    """Comprehensive demonstration of all explainability features"""
+    """Comprehensive demonstration of the recommendation system features"""
     
-    print("🎯 API RECOMMENDATION SYSTEM - EXPLAINABILITY SHOWCASE")
+    print("🎯 API RECOMMENDATION SYSTEM - DEMO")
     print("=" * 65)
-    print("This demo showcases all explainability features using REAL API tags:")
+    print("This demo showcases the recommendation system features using API tags:")
     print("• Input tag validation with coverage analysis")
-    print("• Human-readable explanations with quality indicators")
+    print("• Explanations with quality indicators")
     print("• Tag overlap analysis and similarity scoring")
-    print("• Debug mode vs user-friendly mode")
     print("• Suggestion system for unknown tags")
-    print("• Uses actual API capability tags from the dataset")
+    print("• API capability tags from the dataset")
     print("=" * 65)
     
     # Initialize system

@@ -1,4 +1,4 @@
-# input.py with tag importance and debugging capabilities
+# Input module for the recommendation system
 import torch
 import pandas as pd
 import numpy as np
@@ -13,7 +13,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 class RecommendationSystem:
-    """ recommendation system with tag importance and debugging"""
+    """Recommendation system that provides API recommendations based on user input tags"""
     
     def __init__(self, model_path: str = "model.pt", 
                  data_path: str = "dataset.pt",
@@ -216,7 +216,7 @@ class RecommendationSystem:
     
     def process_input_(self, tags: str, description: str = "", 
                              include_descriptions: bool = True) -> np.ndarray:
-        """ input processing matching training procedure"""
+        """Processes input tags and descriptions into feature vectors"""
         
         # Clean and process tags
         if tags:
@@ -253,7 +253,7 @@ class RecommendationSystem:
     def get__recommendations(self, input_tags: str, input_description: str = "",
                                    top_k: int = 10, tag_boost_factor: float = 75.0,
                                    debug: bool = True, explainability: bool = True) -> List[Dict[str, Any]]:
-        """ recommendations with explainability and input validation"""
+        """Generates API recommendations based on input tags and description"""
         
         if debug:
             print(f"\n🔍  API Recommendation Debug for requirements: '{input_tags}'")
@@ -401,7 +401,7 @@ class RecommendationSystem:
     
     def debug_recommendations(self, input_tag_set: set, recommendations: List[Dict], 
                             input_embedding: np.ndarray):
-        """Debug recommendation quality with  explainability"""
+        """Displays detailed information about recommendations for debugging"""
         print(f"\n🔍 Top {len(recommendations)} API Recommendations for Mashup Debug:")
         print("-" * 80)
         
@@ -427,7 +427,7 @@ class RecommendationSystem:
     
     def debug_embeddings_similarity(self, input_embedding: np.ndarray, 
                                   recommendations: List[Dict]):
-        """Debug embedding similarity patterns"""
+        """Analyzes embedding similarity patterns between input and recommendations"""
         print(f"\n🧠 Embedding Similarity Analysis:")
         print("-" * 50)
         
@@ -534,7 +534,7 @@ class RecommendationSystem:
             print(f"📊 PCA Explained Variance: {explained_var[0]:.3f}, {explained_var[1]:.3f} (Total: {sum(explained_var):.3f})")
     
     def analyze_tag_based_clusters(self, save_path: str = None):
-        """Analyze if embeddings cluster by tag categories"""
+        """Analyzes embedding clustering patterns based on API tags"""
         
         print("🔍 Analyzing tag-based clustering...")
         
