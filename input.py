@@ -23,7 +23,18 @@ class RecommendationSystem:
         
         # Load model
         checkpoint = torch.load(model_path, weights_only=False, map_location='cpu')
-        model_config = checkpoint['model_config']
+        config = checkpoint['config']  # Using 'config' instead of 'model_config'
+        
+        # Map config parameters to model parameters
+        # Based on the model checkpoint's keys and the model's expected parameters
+        model_config = {
+            'in_channels': 2458,  # Based on the checkpoint's model size
+            'hidden_channels': config.get('hidden_dim', 256),  # Map hidden_dim to hidden_channels
+            'out_channels': 128,  # Based on the checkpoint's model size
+            'num_layers': config.get('num_layers', 2),
+            'dropout': config.get('dropout', 0.2),
+            'num_heads': config.get('heads', 4)  # Map heads to num_heads
+        }
         
         # Import model here to avoid circular imports
         self.model = HeteroGNN(**model_config)
@@ -50,7 +61,7 @@ class RecommendationSystem:
         self.apis_df = pd.read_csv("./csv/api_nodes.csv")
         
         print("✅  recommendation system loaded")
-        print(f"📊 Model info: {checkpoint.get('best_val_auc', 'N/A')} best AUC")
+        print(f"📊 Model info: {checkpoint.get('val_auc', 'N/A')} best AUC")
         
         # Cache embeddings for faster inference
         self._cache_embeddings()
