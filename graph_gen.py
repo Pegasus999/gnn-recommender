@@ -17,19 +17,19 @@ OUTPUT_PATH = "dataset.pt"
 VECTORIZER_PATH = "tfidf_vectorizer.pkl"
 TAG_ANALYSIS_PATH = "tag_analysis.pkl"
 
-print("🚀 Creating graph with tag importance...")
+print("Creating graph with tag importance...")
 
 # === Load CSVs ===
 mashups = pd.read_csv(MASHUP_CSV)
 apis = pd.read_csv(API_CSV)
 edges = pd.read_csv(EDGES_CSV)
 
-print(f"📊 Data loaded: {len(mashups)} mashups, {len(apis)} APIs, {len(edges)} edges")
+print(f"Data loaded: {len(mashups)} mashups, {len(apis)} APIs, {len(edges)} edges")
 
 # === Analyze tag distribution ===
 def analyze_tag_distribution():
     """Analyze tag distribution to understand data balance"""
-    print("\n🔍 Analyzing tag distribution...")
+    print("\nAnalyzing tag distribution...")
     
     # Extract all tags
     mashup_tags = []
@@ -48,14 +48,14 @@ def analyze_tag_distribution():
     mashup_tag_counts = Counter(mashup_tags)
     api_tag_counts = Counter(api_tags)
     
-    print(f"📈 Unique mashup tags: {len(mashup_tag_counts)}")
-    print(f"📈 Unique API tags: {len(api_tag_counts)}")
-    print(f"📈 Top 10 mashup tags: {mashup_tag_counts.most_common(10)}")
-    print(f"📈 Top 10 API tags: {api_tag_counts.most_common(10)}")
+    print(f"Unique mashup tags: {len(mashup_tag_counts)}")
+    print(f"Unique API tags: {len(api_tag_counts)}")
+    print(f"Top 10 mashup tags: {mashup_tag_counts.most_common(10)}")
+    print(f"Top 10 API tags: {api_tag_counts.most_common(10)}")
     
     # Find common tags
     common_tags = set(mashup_tag_counts.keys()) & set(api_tag_counts.keys())
-    print(f"🔗 Common tags between mashups and APIs: {len(common_tags)}")
+    print(f"Common tags between mashups and APIs: {len(common_tags)}")
     
     return {
         'mashup_tag_counts': mashup_tag_counts,
@@ -66,7 +66,7 @@ def analyze_tag_distribution():
 tag_analysis = analyze_tag_distribution()
 
 # === Edge filtering with category balancing ===
-print("\n⚖️  Applying edge filtering...")
+print("\nApplying edge filtering...")
 
 # Group edges by API and analyze their tag distribution
 api_edge_dict = defaultdict(list)
@@ -102,7 +102,7 @@ for api_id, edge_list in api_edge_dict.items():
     else:
         filtered_edges.extend(edge_list)
 
-print(f"🔧 Filtered edges: {len(edges)} → {len(filtered_edges)} (reduction: {(1-len(filtered_edges)/len(edges))*100:.1f}%)")
+print(f"Filtered edges: {len(edges)} → {len(filtered_edges)} (reduction: {(1-len(filtered_edges)/len(edges))*100:.1f}%)")
 
 # ===  ID mapping ===
 mashup_ids = mashups['mashup_id'].tolist()
@@ -167,7 +167,7 @@ for i in range(len(api_docs)):
     api_combined.append(combined)
 
 # Create  TF-IDF vectorizer
-print("\n🧠 Creating  TF-IDF features...")
+print("\nCreating  TF-IDF features...")
 vectorizer = TfidfVectorizer(
     max_features=2000,  # Increase vocabulary size
     min_df=2,          # Minimum document frequency
@@ -183,7 +183,7 @@ vectorizer.fit(all_docs)
 # Save  vectorizer
 with open(VECTORIZER_PATH, 'wb') as f:
     pickle.dump(vectorizer, f)
-print(f"✅ Saved  TF-IDF vectorizer to {VECTORIZER_PATH}")
+print(f"Saved  TF-IDF vectorizer to {VECTORIZER_PATH}")
 
 # Transform to features
 mashup_tfidf = vectorizer.transform(mashup_combined).toarray()
@@ -203,7 +203,7 @@ mashup_tag_features = tag_vectorizer.transform(mashup_docs).toarray()
 api_tag_features = tag_vectorizer.transform(api_docs).toarray()
 
 # Concatenate TF-IDF features with tag-only features for enriched embeddings
-print(f"🔗 Concatenating features: TF-IDF({mashup_tfidf.shape[1]}) + Tags({mashup_tag_features.shape[1]})")
+print(f"Concatenating features: TF-IDF({mashup_tfidf.shape[1]}) + Tags({mashup_tag_features.shape[1]})")
 
 mashup_x = torch.tensor(
     np.concatenate([mashup_tfidf, mashup_tag_features], axis=1), 
@@ -251,12 +251,12 @@ with open(TAG_ANALYSIS_PATH, 'wb') as f:
 
 # === Save ===
 torch.save(data, OUTPUT_PATH)
-print(f"✅ Saved  graph to {OUTPUT_PATH}")
-print(f"📊 Graph statistics:")
-print(f"   - Total features per node: {data['mashup'].x.shape[1]}")
-print(f"   - TF-IDF features: {metadata['num_tfidf_features']}")
-print(f"   - Tag-only features: {metadata['num_tag_features']}")
-print(f"   - Edges after filtering: {len(filtered_edges)}")
-print(f"   - Average edges per API: {len(filtered_edges) / len(api_ids):.1f}")
+print(f"Saved  graph to {OUTPUT_PATH}")
+print(f"Graph statistics:")
+print(f"- Total features per node: {data['mashup'].x.shape[1]}")
+print(f"- TF-IDF features: {metadata['num_tfidf_features']}")
+print(f"- Tag-only features: {metadata['num_tag_features']}")
+print(f"- Edges after filtering: {len(filtered_edges)}")
+print(f"- Average edges per API: {len(filtered_edges) / len(api_ids):.1f}")
 
 print("\n🎉  graph creation completed!")

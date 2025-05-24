@@ -75,7 +75,7 @@ def main():
     args = parser.parse_args()
     
     try:
-        print("🚀 Loading API Recommendation System...")
+        print("Loading API Recommendation System...")
         rec_sys = RecommendationSystem()
         
         if args.demo:
@@ -87,10 +87,10 @@ def main():
             quick_demo()
             
         elif args.validate:
-            print(f"\n🧪 Testing tag validation for: '{args.validate}'")
+            print(f"\nTesting tag validation for: '{args.validate}'")
             validation_result = rec_sys.validate_input_tags(args.validate, show_suggestions=True)
             
-            print(f"\n📊 Validation Results:")
+            print(f"\nValidation Results:")
             print(f"   Valid: {validation_result['valid']}")
             print(f"   Coverage: {validation_result['coverage']:.1%}")
             print(f"   Known tags: {validation_result.get('known_tags', set())}")
@@ -103,7 +103,7 @@ def main():
             rec_sys.interactive_recommendation_session()
             
         elif args.tags:
-            print(f"\n🎯 Getting recommendations for: '{args.tags}'")
+            print(f"\nGetting recommendations for: '{args.tags}'")
             
             recommendations = rec_sys.get_recommendations_with_explanations(
                 input_tags=args.tags,
@@ -113,23 +113,23 @@ def main():
             )
             
             if recommendations:
-                print(f"\n✅ Generated {len(recommendations)} recommendations with explanations!")
+                print(f"\nGenerated {len(recommendations)} recommendations with explanations!")
             else:
-                print("❌ No recommendations generated.")
+                print("No recommendations generated.")
                 
         else:
             # Default to interactive mode
-            print("🎮 Starting interactive session...")
+            print("Starting interactive session...")
             print("Use --help for other options.")
             rec_sys.interactive_recommendation_session()
             
     except FileNotFoundError as e:
-        print(f"❌ Required files not found: {e}")
+        print(f"Error: Required files not found: {e}")
         print("Make sure you're in the correct directory with the model files.")
         sys.exit(1)
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)

@@ -36,15 +36,15 @@ def extract_tags_from_string(tag_string):
     return cleaned_tags
 
 def main():
-    print("🏷️  Extracting unique tags from CSV files...")
+    print("Extracting unique tags from CSV files...")
     
     # Load CSV files
     try:
         mashups = pd.read_csv(MASHUP_CSV)
         apis = pd.read_csv(API_CSV)
-        print(f"📊 Loaded {len(mashups)} mashups and {len(apis)} APIs")
+        print(f"Loaded {len(mashups)} mashups and {len(apis)} APIs")
     except FileNotFoundError as e:
-        print(f"❌ Error loading CSV files: {e}")
+        print(f"Error loading CSV files: {e}")
         return
     
     # Extract tags from mashups
@@ -54,7 +54,7 @@ def main():
     # Check both 'categories' and 'tags' columns for mashups
     for col in ['categories', 'tags']:
         if col in mashups.columns:
-            print(f"📈 Processing mashup {col}...")
+            print(f"Processing mashup {col}...")
             for _, row in mashups.iterrows():
                 tags = extract_tags_from_string(row[col])
                 mashup_tags.extend(tags)
@@ -65,7 +65,7 @@ def main():
     api_tag_counter = Counter()
     
     if 'tags' in apis.columns:
-        print("📈 Processing API tags...")
+        print("Processing API tags...")
         for _, row in apis.iterrows():
             tags = extract_tags_from_string(row['tags'])
             api_tags.extend(tags)
@@ -111,7 +111,7 @@ def main():
         pickle.dump(output_data, f)
     
     # Print statistics
-    print(f"\n📊 Tag Extraction Results:")
+    print(f"\nTag Extraction Results:")
     print(f"   Total unique valid tags: {stats['total_unique_tags']}")
     print(f"   Mashup unique tags: {stats['mashup_unique_tags']}")
     print(f"   API unique tags: {stats['api_unique_tags']}")
@@ -120,16 +120,16 @@ def main():
     print(f"   API-only tags: {stats['api_only_tags']}")
     print(f"   Rare tags (appear only once): {stats['rare_tags_count']}")
     
-    print(f"\n🔥 Top 10 most frequent tags:")
+    print(f"\nTop 10 most frequent tags:")
     for tag, count in stats['top_10_tags']:
         print(f"   {tag}: {count}")
     
-    print(f"\n✅ Valid tags saved to:")
+    print(f"\nValid tags saved to:")
     print(f"   JSON: {OUTPUT_JSON}")
     print(f"   Pickle: {OUTPUT_PKL}")
     
     # Preview some tags
-    print(f"\n🏷️  Sample tags (first 20):")
+    print(f"\nSample tags (first 20):")
     for tag in sorted_tags[:20]:
         print(f"   {tag}")
     

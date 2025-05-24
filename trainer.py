@@ -23,7 +23,7 @@ class MashupAPITrainer:
     
     def __init__(self, data_path: str = "dataset.pt", device: str = None):
         self.device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
-        print(f"🚀 Using device: {self.device}")
+        print(f"Using device: {self.device}")
         
         # Load  data
         self.data = torch.load(data_path, weights_only=False, map_location=self.device)
@@ -40,11 +40,11 @@ class MashupAPITrainer:
         self.hidden_channels = 256
         self.out_channels = 128
         
-        print(f"📊  Graph Statistics:")
-        print(f"   - Mashups: {self.data['mashup'].x.size(0)}")
-        print(f"   - APIs: {self.data['api'].x.size(0)}")
-        print(f"   - Original edges: {self.data['mashup', 'uses', 'api'].edge_index.size(1)}")
-        print(f"   - Feature dim: {self.in_channels}")
+        print(f"Graph Statistics:")
+        print(f"- Mashups: {self.data['mashup'].x.size(0)}")
+        print(f"- APIs: {self.data['api'].x.size(0)}")
+        print(f"- Original edges: {self.data['mashup', 'uses', 'api'].edge_index.size(1)}")
+        print(f"- Feature dim: {self.in_channels}")
         
         if hasattr(self.data, 'metadata_dict'):
             meta = self.data.metadata_dict
@@ -56,14 +56,14 @@ class MashupAPITrainer:
         try:
             with open("tfidf_vectorizer.pkl", 'rb') as f:
                 self.vectorizer = pickle.load(f)
-            print("✅ Loaded  vectorizer")
+            print("Loaded vectorizer")
         except FileNotFoundError:
             try:
                 with open("tfidf_vectorizer.pkl", 'rb') as f:
                     self.vectorizer = pickle.load(f)
-                print("✅ Loaded original vectorizer")
+                print("Loaded original vectorizer")
             except FileNotFoundError:
-                print("⚠️ No vectorizer found")
+                print("No vectorizer found")
                 self.vectorizer = None
     
     def create_negative_edges_balanced(self, pos_edges: torch.Tensor, num_neg: int = None):
@@ -164,7 +164,7 @@ class MashupAPITrainer:
                      max_edges_per_api: int = 20):
         """ training pipeline"""
         
-        print(f"\n🚀 Starting  training...")
+        print(f"\nStarting  training...")
         
         # Create balanced data splits
         train_edges, val_edges, test_edges = self.balancer.create_balanced_splits(
@@ -206,7 +206,7 @@ class MashupAPITrainer:
         val_aucs = []
         val_aps = []
         
-        print(f"📊 Training on {train_edges.size(1)} edges, validating on {val_edges.size(1)} edges")
+        print(f"Training on {train_edges.size(1)} edges, validating on {val_edges.size(1)} edges")
         
         for epoch in tqdm(range(epochs), desc="Training"):
             # Training
@@ -261,20 +261,20 @@ class MashupAPITrainer:
                 
                 # Early stopping
                 if patience_counter >= patience:
-                    print(f"\n🛑 Early stopping at epoch {epoch} (patience {patience})")
+                    print(f"\nEarly stopping at epoch {epoch} (patience {patience})")
                     break
         
         # Final test evaluation
-        print(f"\n📊 Final test evaluation...")
+        print(f"\nFinal test evaluation...")
         model.load_state_dict(torch.load(save_path, weights_only=False)['model_state_dict'])
         test_metrics = self.evaluate_(model, train_edges, test_edges)
         
-        print(f"\n🎯 Final Results:")
-        print(f"   Test AUC: {test_metrics['auc']:.4f}")
-        print(f"   Test AP: {test_metrics['ap']:.4f}")
-        print(f"   Test Accuracy: {test_metrics['accuracy']:.4f}")
-        print(f"   Test Precision: {test_metrics['precision']:.4f}")
-        print(f"   Test Recall: {test_metrics['recall']:.4f}")
+        print(f"\nFinal Results:")
+        print(f"Test AUC: {test_metrics['auc']:.4f}")
+        print(f"Test AP: {test_metrics['ap']:.4f}")
+        print(f"Test Accuracy: {test_metrics['accuracy']:.4f}")
+        print(f"Test Precision: {test_metrics['precision']:.4f}")
+        print(f"Test Recall: {test_metrics['recall']:.4f}")
         
         # Plot training curves
         self.plot__training_curves(train_losses, val_aucs, val_aps)
@@ -317,13 +317,13 @@ class MashupAPITrainer:
         
         plt.tight_layout()
         plt.savefig('_training_curves.png', dpi=300, bbox_inches='tight')
-        print("💾 Saved  training curves to _training_curves.png")
+        print("Saved training curves to _training_curves.png")
         plt.show()
 
 
 if __name__ == "__main__":
     # Run  training
-    print("🚀 Starting  Training Pipeline")
+    print("Starting Training Pipeline")
     
     # Train  model
     trainer = MashupAPITrainer("dataset.pt")
@@ -336,5 +336,5 @@ if __name__ == "__main__":
         max_edges_per_api=20  # Stricter edge limit
     )
     
-    print(f"\n🎉  training completed!")
-    print(f"📊 Final test metrics: {test_metrics}")
+    print("Training completed!")
+    print(f"Final test metrics: {test_metrics}")

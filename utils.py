@@ -40,7 +40,7 @@ class DataBalancer:
     
     def analyze_current_balance(self):
         """Analyzes current edge distribution balance"""
-        print("\n📊 Analyzing current data balance...")
+        print("\nAnalyzing current data balance...")
         
         edge_index = self.data['mashup', 'uses', 'api'].edge_index
         mashup_ids = edge_index[0].cpu().numpy()
@@ -49,7 +49,7 @@ class DataBalancer:
         # Count edges per API
         api_edge_counts = Counter(api_ids)
         
-        print("📈 Edge distribution statistics:")
+        print("Edge distribution statistics:")
         counts_array = np.array(list(api_edge_counts.values()))
         print(f"   Mean edges per API: {counts_array.mean():.2f}")
         print(f"   Median edges per API: {np.median(counts_array):.2f}")
@@ -63,7 +63,7 @@ class DataBalancer:
         mashup_edge_counts = Counter(mashup_ids)
         mashup_counts_array = np.array(list(mashup_edge_counts.values()))
         
-        print("\n📈 Mashup distribution statistics:")
+        print("\nMashup distribution statistics:")
         print(f"   Mean edges per mashup: {mashup_counts_array.mean():.2f}")
         print(f"   Median edges per mashup: {np.median(mashup_counts_array):.2f}")
         print(f"   Max edges per mashup: {mashup_counts_array.max()}")
@@ -82,7 +82,7 @@ class DataBalancer:
     def create_balanced_splits(self, val_ratio: float = 0.1, test_ratio: float = 0.1, 
                               max_edges_per_api: int = 20, min_edges_per_api: int = 2):
         """Creates balanced train/validation/test splits with controlled API edge distribution"""
-        print(f"\n⚖️ Creating balanced splits (max {max_edges_per_api} edges per API)...")
+        print(f"\nCreating balanced splits (max {max_edges_per_api} edges per API)...")
         
         edge_index = self.data['mashup', 'uses', 'api'].edge_index
         edges = edge_index.t().cpu().numpy()  # Convert to (num_edges, 2)
@@ -104,7 +104,7 @@ class DataBalancer:
                 else:
                     balanced_edge_indices.extend(edge_indices)
         
-        print(f"📊 Balanced edges: {len(edges)} → {len(balanced_edge_indices)} (reduction: {(1-len(balanced_edge_indices)/len(edges))*100:.1f}%)")
+        print(f"Balanced edges: {len(edges)} → {len(balanced_edge_indices)} (reduction: {(1-len(balanced_edge_indices)/len(edges))*100:.1f}%)")
         
         # Shuffle balanced edges
         random.shuffle(balanced_edge_indices)
@@ -120,7 +120,7 @@ class DataBalancer:
         val_edges = torch.tensor(balanced_edges[num_train:num_train + num_val].T, dtype=torch.long)
         test_edges = torch.tensor(balanced_edges[num_train + num_val:].T, dtype=torch.long)
         
-        print(f"📊 Split sizes - Train: {train_edges.size(1)}, Val: {val_edges.size(1)}, Test: {test_edges.size(1)}")
+        print(f"Split sizes - Train: {train_edges.size(1)}, Val: {val_edges.size(1)}, Test: {test_edges.size(1)}")
         
         return train_edges, val_edges, test_edges
 

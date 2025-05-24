@@ -19,7 +19,7 @@ class RecommendationSystem:
                  data_path: str = "dataset.pt",
                  vectorizer_path: str = "tfidf_vectorizer.pkl"):
         
-        print("🚀 Loading  Recommendation System...")
+        print("Loading  Recommendation System...")
         
         # Load model
         checkpoint = torch.load(model_path, weights_only=False, map_location='cpu')
@@ -54,14 +54,14 @@ class RecommendationSystem:
                 self.tag_analysis = pickle.load(f)
         except FileNotFoundError:
             self.tag_analysis = None
-            print("⚠️ Tag analysis not found")
+            print("Warning: Tag analysis not found")
         
         # Load CSVs for raw data access
         self.mashups_df = pd.read_csv("./csv/mashup_nodes.csv")
         self.apis_df = pd.read_csv("./csv/api_nodes.csv")
         
-        print("✅  recommendation system loaded")
-        print(f"📊 Model info: {checkpoint.get('val_auc', 'N/A')} best AUC")
+        print("Recommendation system loaded")
+        print(f"Model info: {checkpoint.get('val_auc', 'N/A')} best AUC")
         
         # Cache embeddings for faster inference
         self._cache_embeddings()
@@ -71,16 +71,16 @@ class RecommendationSystem:
     
     def _cache_embeddings(self):
         """Pre-compute embeddings for all nodes"""
-        print("🧠 Caching embeddings...")
+        print("Caching embeddings...")
         with torch.no_grad():
             z_dict = self.model(self.data.x_dict, self.data.edge_index_dict)
             self.mashup_embeddings = z_dict['mashup'].cpu().numpy()
             self.api_embeddings = z_dict['api'].cpu().numpy()
-        print("✅ Embeddings cached")
+        print("Embeddings cached")
     
     def _build_tag_vocabulary(self):
         """Build API tag vocabulary for input validation (users describe needed capabilities using API-style tags)"""
-        print("🏷️ Building API capability vocabulary...")
+        print("Building API capability vocabulary...")
         
         mashup_tags = set()
         api_tags = set()
@@ -110,10 +110,10 @@ class RecommendationSystem:
         self.api_tags = api_tags  # For API capabilities
         self.common_tags = sorted(self.api_tag_frequency.keys(), key=lambda x: self.api_tag_frequency[x], reverse=True)
         
-        print(f"✅ API capability vocabulary built: {len(self.dataset_tags)} unique capability tags")
+        print(f"API capability vocabulary built: {len(self.dataset_tags)} unique capability tags")
         if mashup_tags:
-            print(f"📊 Found {len(mashup_tags)} mashup tags (supplementary)")
-        print(f"📈 Top 10 capability tags: {self.common_tags[:10]}")
+            print(f"Found {len(mashup_tags)} mashup tags (supplementary)")
+        print(f"Top 10 capability tags: {self.common_tags[:10]}")
     
     def validate_input_tags(self, input_tags: str, show_suggestions: bool = True) -> dict:
         """Validate input tags against dataset vocabulary and provide suggestions"""
@@ -250,58 +250,52 @@ class RecommendationSystem:
         
         return features
     
-    def get__recommendations(self, input_tags: str, input_description: str = "",
-                                   top_k: int = 10, tag_boost_factor: float = 75.0,
-                                   debug: bool = True, explainability: bool = True) -> List[Dict[str, Any]]:
+    def get__recommendations(self, input_tags: str, input_description: str = "", top_k: int = 10, tag_boost_factor: float = 75.0, debug: bool = True, explainability: bool = True) -> List[Dict[str, Any]]:
         """Generates API recommendations based on input tags and description"""
-        
         if debug:
-            print(f"\n🔍  API Recommendation Debug for requirements: '{input_tags}'")
-            print(f"📝 Project description: '{input_description[:100]}...' " if len(input_description) > 100 else f"📝 Project description: '{input_description}'")
-            print(f"🏷️ Tag boost factor: {tag_boost_factor}")
-        
+            print(f"\nAPI Recommendation Debug for requirements: '{input_tags}'")
+        print(f"Project description: '{input_description[:100]}...' " if len(input_description) > 100 else f"Project description: '{input_description}'")
+        print(f"Tag boost factor: {tag_boost_factor}")
+
         # Validate input tags (should describe needed capabilities)
         validation_result = self.validate_input_tags(input_tags, show_suggestions=debug)
-        
+
         if not validation_result['valid']:
-            print(f"\n❌ Input Validation Failed!")
+            print(f"\nInput Validation Failed!")
             for warning in validation_result['warnings']:
                 print(f"   {warning}")
             if validation_result['suggestions']:
-                print(f"   💡 Try these API capability tags: {', '.join(validation_result['suggestions'][:5])}")
+                print(f"   Try these API capability tags: {', '.join(validation_result['suggestions'][:5])}")
             return []
-        
+
         if debug and validation_result['coverage'] < 1.0:
-            print(f"\n⚠️ Input Tag Coverage Warning:")
+            print(f"\nInput Tag Coverage Warning:")
             print(f"   Known capability tags: {validation_result['known_tags']}")
             print(f"   Unknown tags: {validation_result['unknown_tags']}")
             if validation_result['suggestions']:
                 print(f"   Suggestions: {', '.join(validation_result['suggestions'][:5])}")
-        
+
         # Process input
         input_features = self.process_input_(input_tags, input_description)
         input_tensor = torch.tensor(input_features, dtype=torch.float).unsqueeze(0)
-        
+
         # Get input embedding
         with torch.no_grad():
-            # Create temporary data with input
             temp_data = self.data.clone()
             temp_mashup_x = torch.cat([temp_data['mashup'].x, input_tensor], dim=0)
             temp_data['mashup'].x = temp_mashup_x
-            
-            # Get embeddings
             z_dict = self.model(temp_data.x_dict, temp_data.edge_index_dict)
             input_embedding = z_dict['mashup'][-1].cpu().numpy()
-        
+
         # Calculate embedding similarities
         embedding_similarities = cosine_similarity([input_embedding], self.api_embeddings)[0]
-        
-        #  tag-based scoring
+
+        # Tag-based scoring
         api_scores = []
         input_tag_set = set(tag.strip().lower() for tag in input_tags.split(",") if tag.strip())
-        
+
         if debug:
-            print(f"🏷️ Required capabilities: {input_tag_set}")
+            print(f"Required capabilities: {input_tag_set}")
         
         for api_idx in range(len(self.apis_df)):
             api_id = self.data['api'].node_id[api_idx].item()
@@ -378,7 +372,7 @@ class RecommendationSystem:
     
     def display_explainability(self, recommendations: List[Dict], input_tag_set: set):
         """Display user-friendly explanations for API recommendations"""
-        print(f"\n💡 Why These APIs Are Recommended for Your Mashup:")
+        print(f"\nWhy These APIs Are Recommended for Your Mashup:")
         print("-" * 60)
         
         for i, rec in enumerate(recommendations, 1):
@@ -392,28 +386,28 @@ class RecommendationSystem:
                 additional_capabilities = sorted(rec['api_tag_set'] - input_tag_set)
                 
                 if matching_capabilities:
-                    print(f"   🎯 Provides needed: {', '.join(matching_capabilities)}")
+                    print(f"   Provides needed: {', '.join(matching_capabilities)}")
                 if additional_capabilities:
-                    print(f"   ➕ Bonus capabilities: {', '.join(additional_capabilities[:5])}")
+                    print(f"    Bonus capabilities: {', '.join(additional_capabilities[:5])}")
             
             # Score breakdown
-            print(f"   📊 Score breakdown: Relevance({rec['embedding_score']:.2f}) + Capability bonus({rec['tag_bonus']:.0f}) = {rec['final_score']:.2f}")
+            print(f"   Score breakdown: Relevance({rec['embedding_score']:.2f}) + Capability bonus({rec['tag_bonus']:.0f}) = {rec['final_score']:.2f}")
     
     def debug_recommendations(self, input_tag_set: set, recommendations: List[Dict], 
                             input_embedding: np.ndarray):
         """Displays detailed information about recommendations for debugging"""
-        print(f"\n🔍 Top {len(recommendations)} API Recommendations for Mashup Debug:")
+        print(f"\nTop {len(recommendations)} API Recommendations for Mashup Debug:")
         print("-" * 80)
         
         for i, rec in enumerate(recommendations[:5]):  # Show top 5
             print(f"\n{i+1}. {rec['name']} (ID: {rec['api_id']})")
-            print(f"   📊 Final Score: {rec['final_score']:.3f}")
-            print(f"   🧠 Relevance Score: {rec['embedding_score']:.3f}")
-            print(f"   🏷️ Capability Bonus: {rec['tag_bonus']:.1f}")
-            print(f"   🔗 Capabilities Provided: {rec['tag_overlap']}/{len(input_tag_set)}")
-            print(f"   📈 Need Coverage: {rec['tag_coverage']:.2f}")
-            print(f"   🏷️ API Capabilities: {rec['api_tag_set']}")
-            print(f"   ✅ Addresses Needs: {input_tag_set & rec['api_tag_set']}")
+            print(f"Final Score: {rec['final_score']:.3f}")
+            print(f"Relevance Score: {rec['embedding_score']:.3f}")
+            print(f"️ Capability Bonus: {rec['tag_bonus']:.1f}")
+            print(f"Capabilities Provided: {rec['tag_overlap']}/{len(input_tag_set)}")
+            print(f"Need Coverage: {rec['tag_coverage']:.2f}")
+            print(f"️API Capabilities: {rec['api_tag_set']}")
+            print(f"Addresses Needs: {input_tag_set & rec['api_tag_set']}")
             
             # Add explanation
             if 'explanation' in rec:
@@ -428,7 +422,7 @@ class RecommendationSystem:
     def debug_embeddings_similarity(self, input_embedding: np.ndarray, 
                                   recommendations: List[Dict]):
         """Analyzes embedding similarity patterns between input and recommendations"""
-        print(f"\n🧠 Embedding Similarity Analysis:")
+        print(f"\n Embedding Similarity Analysis:")
         print("-" * 50)
         
         # Get embeddings for top recommendations
@@ -437,7 +431,7 @@ class RecommendationSystem:
         # Calculate pairwise similarities
         similarities = cosine_similarity([input_embedding] + top_embeddings)
         
-        print("📊 Cosine Similarities Matrix:")
+        print(" Cosine Similarities Matrix:")
         print("     Input   API1   API2   API3   API4   API5")
         for i, row in enumerate(similarities):
             if i == 0:
@@ -446,7 +440,7 @@ class RecommendationSystem:
                 print(f"API{i}   {' '.join(f'{sim:.3f}' for sim in row)}")
         
         # Check for embedding clustering patterns
-        print(f"\n🎯 Embedding Quality Check:")
+        print(f"\n Embedding Quality Check:")
         input_to_top5_sims = [similarities[0][i+1] for i in range(min(5, len(recommendations)))]
         print(f"   Mean similarity to top 5: {np.mean(input_to_top5_sims):.3f}")
         print(f"   Std similarity to top 5: {np.std(input_to_top5_sims):.3f}")
@@ -461,7 +455,7 @@ class RecommendationSystem:
                            method: str = 'tsne', save_path: str = None):
         """Visualize embeddings using PCA or t-SNE"""
         
-        print(f"🎨 Creating {method.upper()} visualization...")
+        print(f" Creating {method.upper()} visualization...")
         
         # Get input embedding
         input_features = self.process_input_(input_tags, input_description)
@@ -524,14 +518,14 @@ class RecommendationSystem:
         
         if save_path:
             plt.savefig(save_path, dpi=300, bbox_inches='tight')
-            print(f"💾 Saved visualization to {save_path}")
+            print(f" Saved visualization to {save_path}")
         
         plt.show()
         
         # Print explained variance for PCA
         if method.lower() == 'pca':
             explained_var = reducer.explained_variance_ratio_
-            print(f"📊 PCA Explained Variance: {explained_var[0]:.3f}, {explained_var[1]:.3f} (Total: {sum(explained_var):.3f})")
+            print(f" PCA Explained Variance: {explained_var[0]:.3f}, {explained_var[1]:.3f} (Total: {sum(explained_var):.3f})")
     
     def analyze_tag_based_clusters(self, save_path: str = None):
         """Analyzes embedding clustering patterns based on API tags"""
@@ -539,14 +533,14 @@ class RecommendationSystem:
         print("🔍 Analyzing tag-based clustering...")
         
         if not self.tag_analysis:
-            print("❌ Tag analysis not available")
+            print("Tag analysis not available")
             return
         
         # Get top common tags
         common_tags = list(self.tag_analysis['common_tags'])[:10]
         
         if len(common_tags) < 3:
-            print("❌ Not enough common tags for analysis")
+            print("Not enough common tags for analysis")
             return
         
         # Create tag-based groups
@@ -571,7 +565,7 @@ class RecommendationSystem:
             print("❌ Not enough APIs per tag category for clustering analysis")
             return
         
-        print(f"📊 Analyzing {len(valid_groups)} tag groups:")
+        print(f"Analyzing {len(valid_groups)} tag groups:")
         for tag, indices in valid_groups.items():
             print(f"   {tag}: {len(indices)} APIs")
         
@@ -611,7 +605,7 @@ class RecommendationSystem:
         inter_std = np.std(inter_similarities)
         
         # Print results
-        print(f"\n📊 Clustering Analysis Results:")
+        print(f"\nClustering Analysis Results:")
         print("-" * 50)
         
         print("Intra-group similarities (same tag):")
@@ -624,7 +618,7 @@ class RecommendationSystem:
         avg_intra = np.mean([stats['intra_mean'] for stats in results.values()])
         clustering_score = (avg_intra - inter_mean) / (avg_intra + inter_mean)
         
-        print(f"\n🎯 Clustering Quality Score: {clustering_score:.3f}")
+        print(f"\nClustering Quality Score: {clustering_score:.3f}")
         print("   (Higher values indicate intra-group > inter-group similarity)")
         
         # Visualization
@@ -645,8 +639,7 @@ class RecommendationSystem:
         x_pos = np.arange(len(tags))
         ax1.bar(x_pos, intra_means, yerr=intra_stds, alpha=0.7, 
                 label='Intra-group', capsize=5)
-        ax1.axhline(y=inter_mean, color='red', linestyle='--', 
-                    label=f'Inter-group mean ({inter_mean:.3f})')
+        ax1.axhline(y=inter_mean, color='red', linestyle='--', label=f'Inter-group mean ({inter_mean:.3f})')
         
         ax1.set_xlabel('Tag Categories')
         ax1.set_ylabel('Cosine Similarity')
@@ -694,7 +687,7 @@ class RecommendationSystem:
         
         if save_path:
             plt.savefig(save_path, dpi=300, bbox_inches='tight')
-            print(f"💾 Saved clustering analysis to {save_path}")
+            print(f"Saved clustering analysis to {save_path}")
         
         plt.show()
     
@@ -704,7 +697,7 @@ class RecommendationSystem:
         
         print(f"🔍 Finding APIs for your needs: '{input_tags}'")
         if input_description:
-            print(f"📝 Project description: '{input_description[:50]}...' " if len(input_description) > 50 else f"📝 Project description: '{input_description}'")
+            print(f"Project description: '{input_description[:50]}...' " if len(input_description) > 50 else f"📝 Project description: '{input_description}'")
         
         # Get recommendations with explainability
         recommendations = self.get__recommendations(
@@ -716,7 +709,7 @@ class RecommendationSystem:
         )
         
         if not recommendations:
-            print("❌ No API recommendations could be generated. Please check your requirement tags.")
+            print("No API recommendations could be generated. Please check your requirement tags.")
             return []
         
         return recommendations
@@ -814,11 +807,11 @@ def demo__recommendations():
         
         # Demo explainability mode
         print(f"\n{'='*60}")
-        print("🎯 EXPLAINABILITY MODE DEMO")
+        print("EXPLAINABILITY MODE DEMO")
         print(f"{'='*60}")
         
         for i, test_case in enumerate(test_cases[:3], 1):  # Test first 3 cases
-            print(f"\n🔍 Test Case {i}: {test_case['name']}")
+            print(f"\nTest Case {i}: {test_case['name']}")
             print("-" * 40)
             
             # Get recommendations with explainability
@@ -831,11 +824,11 @@ def demo__recommendations():
         
         # Demo input validation
         print(f"\n{'='*60}")
-        print("⚠️ INPUT VALIDATION DEMO")
+        print("INPUT VALIDATION DEMO")
         print(f"{'='*60}")
         
         # Test with unknown tags
-        print(f"\n🧪 Testing with unknown tags...")
+        print(f"\nTesting with unknown tags...")
         recommendations = rec_sys.get_recommendations_with_explanations(
             input_tags="invalidtag, nonexistent, fakecategory",
             input_description="This should trigger validation warnings",
@@ -844,7 +837,7 @@ def demo__recommendations():
         )
         
         # Test with mixed known/unknown tags
-        print(f"\n🧪 Testing with mixed known/unknown tags...")
+        print(f"\nTesting with mixed known/unknown tags...")
         recommendations = rec_sys.get_recommendations_with_explanations(
             input_tags="web, invalidtag, api, nonexistent",
             input_description="Mix of valid and invalid tags",

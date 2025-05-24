@@ -30,12 +30,12 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Initialize the recommendation system once at startup
-print("🚀 Initializing GNN Recommendation System...")
+print("Initializing GNN Recommendation System...")
 try:
     rec_sys = RecommendationSystem()
-    print("✅ Recommendation system loaded successfully!")
+    print("Recommendation system loaded successfully!")
 except Exception as e:
-    print(f"❌ Failed to load recommendation system: {e}")
+    print(f"Failed to load recommendation system: {e}")
     sys.exit(1)
 
 def format_recommendation_response(recommendations, apis_df, validation_result=None):
@@ -389,17 +389,17 @@ def index():
     })
 
 if __name__ == '__main__':
-    print("\n🌐 Starting GNN Recommender Flask Server...")
-    print("📚 Available endpoints:")
-    print("  • POST /recommend - Get API recommendations")
-    print("  • POST /validate - Validate input tags")
-    print("  • GET /valid-tags - Get all valid tags")
-    print("  • GET /health - Health check")
-    print("  • GET / - API documentation")
-    print("\n🔗 Example usage:")
+    print("\nStarting GNN Recommender Flask Server...")
+    print("Available endpoints:")
+    print("POST /recommend - Get API recommendations")
+    print("POST /validate - Validate input tags")
+    print("GET /valid-tags - Get all valid tags")
+    print("GET /health - Health check")
+    print("GET / - API documentation")
+    print("\nExample usage:")
     print("curl -X POST http://localhost:5000/recommend \\")
     print("  -H 'Content-Type: application/json' \\")
     print("  -d '{\"tags\": \"social,mapping,location\", \"description\": \"Social app\", \"top_k\": 3}'")
-    print("\n✨ Server starting on http://localhost:5000")
+    print("\nServer starting on http://localhost:5000")
     
     app.run(host='0.0.0.0', port=5000, debug=True)
