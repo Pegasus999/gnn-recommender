@@ -323,7 +323,7 @@ class MashupAPITrainer:
 
 if __name__ == "__main__":
     # Run  training
-    print("Starting Training Pipeline")
+    print("Starting Training Pipeline babyyyyy")
     
     # Train  model
     trainer = MashupAPITrainer("dataset.pt")
