@@ -195,6 +195,3 @@ The model is evaluated using several metrics:
 
 Contributions are welcome! Please feel free to submit pull requests.
 
-## License
-
-[Specify your license here]
