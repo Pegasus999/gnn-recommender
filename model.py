@@ -15,7 +15,7 @@ class HeteroGNN(nn.Module):
         self.num_layers = num_layers
         self.dropout = dropout
         
-        # Multi-layer GNN with proper residual connections
+        # Multi-layer GNN with residual connections
         self.convs = nn.ModuleList()
         self.batch_norms = nn.ModuleList()
         self.residual_projections = nn.ModuleList()

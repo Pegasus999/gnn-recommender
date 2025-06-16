@@ -194,7 +194,3 @@ The model is evaluated using several metrics:
 ## Contributing
 
 Contributions are welcome! Please feel free to submit pull requests.
-
-## License
-
-[Specify your license here]

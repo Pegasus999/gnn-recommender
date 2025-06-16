@@ -1,0 +1,21 @@
+Config 8 Training Results - Aggressive Learning
+==================================================
+
+Configuration: {'hidden_channels': 192, 'latent_channels': 96, 'dropout': 0.3, 'lr': 0.0008, 'weight_decay': 1e-05, 'patience': 8}
+
+Training Summary:
+  Total Epochs: 138
+  Best Epoch: 130
+  Best Validation RMSE: 0.0637
+  Final Test RMSE: 0.0624
+  Final Test MAE: 0.0236
+
+Observed-edge Reconstruction:
+  RMSE: 1.2640
+  MAE: 0.4764
+
+Files Generated:
+  - best_gae_config8.pt (best model weights)
+  - predicted_matrix_config8.txt (predictions)
+  - config8_training_history.pkl (complete history)
+  - charts/config8_*.png (training curves)

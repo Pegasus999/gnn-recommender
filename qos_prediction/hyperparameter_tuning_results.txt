@@ -1,0 +1,35 @@
+Hyperparameter Tuning Results
+==================================================
+
+Best Configuration: 8
+Best Parameters: {'hidden_channels': 192, 'latent_channels': 96, 'dropout': 0.3, 'lr': 0.0008, 'weight_decay': 1e-05, 'patience': 8}
+Best Validation RMSE: 0.0626
+Final Test RMSE: 0.0614
+Final Test MAE: 0.0230
+
+All Configuration Results (sorted by validation RMSE):
+--------------------------------------------------
+ 1. Config 8 | Val RMSE: 0.0626 | Test RMSE: 0.0614 | Test MAE: 0.0230
+    Parameters: {'hidden_channels': 192, 'latent_channels': 96, 'dropout': 0.3, 'lr': 0.0008, 'weight_decay': 1e-05, 'patience': 8}
+
+ 2. Config 5 | Val RMSE: 0.0633 | Test RMSE: 0.0621 | Test MAE: 0.0239
+    Parameters: {'hidden_channels': 256, 'latent_channels': 64, 'dropout': 0.2, 'lr': 0.0002, 'weight_decay': 1e-05, 'patience': 15}
+
+ 3. Config 3 | Val RMSE: 0.0643 | Test RMSE: 0.0631 | Test MAE: 0.0247
+    Parameters: {'hidden_channels': 64, 'latent_channels': 32, 'dropout': 0.3, 'lr': 0.001, 'weight_decay': 5e-05, 'patience': 10}
+
+ 4. Config 6 | Val RMSE: 0.0658 | Test RMSE: 0.0647 | Test MAE: 0.0284
+    Parameters: {'hidden_channels': 96, 'latent_channels': 48, 'dropout': 0.4, 'lr': 0.0007, 'weight_decay': 0.0002, 'patience': 10}
+
+ 5. Config 2 | Val RMSE: 0.0679 | Test RMSE: 0.0669 | Test MAE: 0.0321
+    Parameters: {'hidden_channels': 256, 'latent_channels': 128, 'dropout': 0.5, 'lr': 0.0003, 'weight_decay': 0.0001, 'patience': 15}
+
+ 6. Config 4 | Val RMSE: 0.0856 | Test RMSE: 0.0849 | Test MAE: 0.0360
+    Parameters: {'hidden_channels': 128, 'latent_channels': 64, 'dropout': 0.7, 'lr': 0.0005, 'weight_decay': 0.0005, 'patience': 12}
+
+ 7. Config 1 | Val RMSE: 0.0927 | Test RMSE: 0.0921 | Test MAE: 0.0389
+    Parameters: {'hidden_channels': 128, 'latent_channels': 64, 'dropout': 0.5, 'lr': 0.0005, 'weight_decay': 0.0001, 'patience': 10}
+
+ 8. Config 7 | Val RMSE: 0.0974 | Test RMSE: 0.0968 | Test MAE: 0.0500
+    Parameters: {'hidden_channels': 128, 'latent_channels': 32, 'dropout': 0.6, 'lr': 0.0003, 'weight_decay': 0.001, 'patience': 20}
+
